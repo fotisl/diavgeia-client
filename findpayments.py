@@ -5,14 +5,21 @@ from datetime import date
 import csv
 import urllib3
 
+urllib3.disable_warnings()
+
 try:
     from opendata import OpendataClient
 except ImportError:
-    import urllib
-    urllib.urlretrieve('https://raw.githubusercontent.com/diavgeia/opendata-client-samples-python/master/opendata.py', 'opendata.py')
+    import requests
+    import sys
+    r = requests.get('https://raw.githubusercontent.com/diavgeia/opendata-client-samples-python/master/opendata.py')
+    if r.status_code != requests.codes.ok:
+        print 'Cannot find diavgeia opendata client.'    
+        sys.exit(1)
+    with open('opendata.py', 'w') as f:
+        f.write(r.content)
     from opendata import OpendataClient
 
-urllib3.disable_warnings()
 oc = OpendataClient('https://diavgeia.gov.gr/opendata')
 
 def getafmbyname(name):
